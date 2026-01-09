@@ -1,0 +1,91 @@
+<div class="row justify-content-center">
+  <div class="col-md-8">
+    <div class="card">
+      <div class="card-header">
+        <h4>Đặt chỗ - <%= @bookable.is_a?(Flight) ? "Chuyến bay" : "Khách sạn" %></h4>
+      </div>
+      <div class="card-body">
+        <!-- Booking Item Details -->
+        <div class="mb-4 p-3 bg-light rounded">
+          <% if @bookable.is_a?(Flight) %>
+            <h5><%= @bookable.airline %> - <%= @bookable.flight_number %></h5>
+            <p class="mb-2">
+              <strong><%= @bookable.departure_city %></strong> → <strong><%= @bookable.arrival_city %></strong>
+            </p>
+            <p class="mb-2">
+              <i class="fas fa-clock"></i> 
+              <%= @bookable.departure_time.strftime("%d/%m/%Y %H:%M") %> - 
+              <%= @bookable.arrival_time.strftime("%d/%m/%Y %H:%M") %>
+            </p>
+            <p class="mb-0">
+              <strong class="text-primary"><%= number_to_currency(@bookable.price, unit: "₫", delimiter: ",") %></strong>
+            </p>
+          <% else %>
+            <h5><%= @bookable.name %></h5>
+            <p class="mb-2">
+              <i class="fas fa-map-marker-alt"></i> <%= @bookable.address %>
+            </p>
+            <p class="mb-2">
+              <% if @bookable.rating %>
+                <span class="text-warning">
+                  <% @bookable.rating.times do %>★<% end %>
+                </span>
+              <% end %>
+            </p>
+            <p class="mb-0">
+              <strong class="text-success"><%= number_to_currency(@bookable.price_per_night, unit: "₫", delimiter: ",") %>/đêm</strong>
+            </p>
+          <% end %>
+        </div>
+
+        <!-- Booking Form -->
+        <%= form_with model: @booking, local: true do |f| %>
+          <% if @booking.errors.any? %>
+            <div class="alert alert-danger">
+              <ul class="mb-0">
+                <% @booking.errors.full_messages.each do |message| %>
+                  <li><%= message %></li>
+                <% end %>
+              </ul>
+            </div>
+          <% end %>
+
+          <div class="row">
+            <div class="col-md-6 mb-3">
+              <%= f.label :check_in_date, @bookable.is_a?(Flight) ? "Ngày khởi hành" : "Ngày nhận phòng", class: "form-label" %>
+              <%= f.date_field :check_in_date, class: "form-control", required: true %>
+            </div>
+            <div class="col-md-6 mb-3">
+              <%= f.label :check_out_date, @bookable.is_a?(Flight) ? "Ngày về" : "Ngày trả phòng", class: "form-label" %>
+              <%= f.date_field :check_out_date, class: "form-control", required: true %>
+            </div>
+          </div>
+
+          <% if @bookable.is_a?(Flight) %>
+            <div class="mb-3">
+              <%= f.label :passengers_count, "Số hành khách", class: "form-label" %>
+              <%= f.number_field :passengers_count, value: 1, min: 1, max: 9, class: "form-control" %>
+            </div>
+          <% end %>
+
+          <div class="mb-3">
+            <%= f.label :special_requests, "Yêu cầu đặc biệt", class: "form-label" %>
+            <%= f.text_area :special_requests, rows: 3, class: "form-control", placeholder: "Nhập yêu cầu đặc biệt (nếu có)" %>
+          </div>
+
+          <!-- Hidden fields -->
+          <%= hidden_field_tag :flight_id, params[:flight_id] if params[:flight_id] %>
+          <%= hidden_field_tag :hotel_id, params[:hotel_id] if params[:hotel_id] %>
+
+          <div class="d-grid gap-2">
+            <%= f.submit "Xác nhận đặt chỗ", class: "btn btn-primary btn-lg" %>
+          </div>
+        <% end %>
+
+        <div class="mt-3 text-center">
+          <%= link_to "Quay lại", :back, class: "btn btn-outline-secondary" %>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

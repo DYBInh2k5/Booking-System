@@ -1,0 +1,99 @@
+<div class="row justify-content-center">
+    <div class="col-md-8">
+        <div class="card shadow">
+            <div class="card-header bg-primary text-white">
+                <h4 class="mb-0">
+                    <i class="fas fa-<%= type === 'flight' ? 'plane' : 'hotel' %>"></i>
+                    Đặt chỗ - <%= type === 'flight' ? 'Chuyến bay' : 'Khách sạn' %>
+                </h4>
+            </div>
+            <div class="card-body">
+                <!-- Booking Item Details -->
+                <div class="mb-4 p-3 bg-light rounded">
+                    <% if (type === 'flight') { %>
+                        <h5><%= bookable.airline %> - <%= bookable.flight_number %></h5>
+                        <p class="mb-2">
+                            <strong><%= bookable.departure_city %></strong> → <strong><%= bookable.arrival_city %></strong>
+                        </p>
+                        <p class="mb-2">
+                            <i class="fas fa-clock"></i> 
+                            <%= formatDateTime(bookable.departure_time) %> - 
+                            <%= formatDateTime(bookable.arrival_time) %>
+                        </p>
+                        <p class="mb-0">
+                            <strong class="text-primary"><%= formatCurrency(bookable.price) %></strong>
+                        </p>
+                    <% } else { %>
+                        <h5><%= bookable.name %></h5>
+                        <p class="mb-2">
+                            <i class="fas fa-map-marker-alt"></i> <%= bookable.address %>
+                        </p>
+                        <p class="mb-2">
+                            <% if (bookable.rating) { %>
+                                <span class="text-warning">
+                                    <% for(let i = 0; i < bookable.rating; i++) { %>★<% } %>
+                                </span>
+                            <% } %>
+                        </p>
+                        <p class="mb-0">
+                            <strong class="text-success"><%= formatCurrency(bookable.price_per_night) %>/đêm</strong>
+                        </p>
+                    <% } %>
+                </div>
+
+                <!-- Booking Form -->
+                <form method="POST" action="/bookings">
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">
+                                <%= type === 'flight' ? 'Ngày khởi hành' : 'Ngày nhận phòng' %>
+                            </label>
+                            <input type="date" name="check_in_date" class="form-control" required 
+                                   min="<%= new Date().toISOString().split('T')[0] %>">
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">
+                                <%= type === 'flight' ? 'Ngày về' : 'Ngày trả phòng' %>
+                            </label>
+                            <input type="date" name="check_out_date" class="form-control" required 
+                                   min="<%= new Date(Date.now() + 86400000).toISOString().split('T')[0] %>">
+                        </div>
+                    </div>
+
+                    <% if (type === 'flight') { %>
+                        <div class="mb-3">
+                            <label class="form-label">Số hành khách</label>
+                            <input type="number" name="passengers_count" class="form-control" 
+                                   value="1" min="1" max="9" required>
+                        </div>
+                    <% } %>
+
+                    <div class="mb-3">
+                        <label class="form-label">Yêu cầu đặc biệt</label>
+                        <textarea name="special_requests" rows="3" class="form-control" 
+                                  placeholder="Nhập yêu cầu đặc biệt (nếu có)"></textarea>
+                    </div>
+
+                    <!-- Hidden fields -->
+                    <% if (type === 'flight') { %>
+                        <input type="hidden" name="flight_id" value="<%= bookable.id %>">
+                    <% } else { %>
+                        <input type="hidden" name="hotel_id" value="<%= bookable.id %>">
+                    <% } %>
+
+                    <div class="d-grid gap-2">
+                        <button type="submit" class="btn btn-primary btn-lg">
+                            <i class="fas fa-check"></i> Xác nhận đặt chỗ
+                        </button>
+                    </div>
+                </form>
+
+                <div class="mt-3 text-center">
+                    <a href="javascript:history.back()" class="btn btn-outline-secondary">
+                        <i class="fas fa-arrow-left"></i> Quay lại
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

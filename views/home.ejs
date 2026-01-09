@@ -1,0 +1,159 @@
+<div class="hero-section text-white py-5 mb-5 rounded">
+    <div class="container text-center">
+        <h1 class="display-4 mb-4">Chào mừng đến với Hệ thống Đặt chỗ</h1>
+        <p class="lead mb-4">Đặt vé máy bay và phòng khách sạn dễ dàng, nhanh chóng</p>
+        <a href="/search" class="btn btn-light btn-lg">
+            <i class="fas fa-search"></i> Bắt đầu tìm kiếm
+        </a>
+    </div>
+</div>
+
+<!-- Quick Search -->
+<div class="row mb-5">
+    <div class="col-md-6">
+        <div class="card shadow">
+            <div class="card-header bg-primary text-white">
+                <h5 class="mb-0"><i class="fas fa-plane"></i> Tìm chuyến bay</h5>
+            </div>
+            <div class="card-body">
+                <form id="flight-search-form">
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <select name="departure_city" class="form-select" required>
+                                <option value="">Từ</option>
+                                <option value="Hà Nội">Hà Nội</option>
+                                <option value="Hồ Chí Minh">Hồ Chí Minh</option>
+                                <option value="Đà Nẵng">Đà Nẵng</option>
+                            </select>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <select name="arrival_city" class="form-select" required>
+                                <option value="">Đến</option>
+                                <option value="Hà Nội">Hà Nội</option>
+                                <option value="Hồ Chí Minh">Hồ Chí Minh</option>
+                                <option value="Đà Nẵng">Đà Nẵng</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="mb-3">
+                        <input type="date" name="departure_date" class="form-control" min="<%= new Date().toISOString().split('T')[0] %>">
+                    </div>
+                    <button type="submit" class="btn btn-primary w-100">
+                        <i class="fas fa-search"></i> Tìm chuyến bay
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-md-6">
+        <div class="card shadow">
+            <div class="card-header bg-success text-white">
+                <h5 class="mb-0"><i class="fas fa-hotel"></i> Tìm khách sạn</h5>
+            </div>
+            <div class="card-body">
+                <form id="hotel-search-form">
+                    <div class="mb-3">
+                        <select name="city" class="form-select" required>
+                            <option value="">Chọn thành phố</option>
+                            <option value="Hà Nội">Hà Nội</option>
+                            <option value="Hồ Chí Minh">Hồ Chí Minh</option>
+                            <option value="Đà Nẵng">Đà Nẵng</option>
+                        </select>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <input type="date" name="check_in_date" class="form-control" placeholder="Nhận phòng" min="<%= new Date().toISOString().split('T')[0] %>">
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <input type="date" name="check_out_date" class="form-control" placeholder="Trả phòng" min="<%= new Date(Date.now() + 86400000).toISOString().split('T')[0] %>">
+                        </div>
+                    </div>
+                    <button type="submit" class="btn btn-success w-100">
+                        <i class="fas fa-search"></i> Tìm khách sạn
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Featured Flights -->
+<% if (featured_flights && featured_flights.length > 0) { %>
+    <div class="mb-5">
+        <h3 class="mb-4">Chuyến bay nổi bật</h3>
+        <div class="row">
+            <% featured_flights.forEach(flight => { %>
+                <div class="col-md-4 mb-3">
+                    <div class="card h-100">
+                        <div class="card-body">
+                            <h6 class="card-title"><%= flight.airline %> - <%= flight.flight_number %></h6>
+                            <p class="card-text">
+                                <strong><%= flight.departure_city %></strong> → <strong><%= flight.arrival_city %></strong><br>
+                                <small class="text-muted">
+                                    <%= formatDateTime(flight.departure_time) %> - 
+                                    <%= formatDateTime(flight.arrival_time) %>
+                                </small>
+                            </p>
+                            <div class="d-flex justify-content-between align-items-center">
+                                <span class="h5 text-primary"><%= formatCurrency(flight.price) %></span>
+                                <% if (user) { %>
+                                    <a href="/bookings/new?flight_id=<%= flight.id %>" class="btn btn-primary btn-sm">Đặt ngay</a>
+                                <% } else { %>
+                                    <a href="/login" class="btn btn-outline-primary btn-sm">Đăng nhập để đặt</a>
+                                <% } %>
+                            </div>
+                            <small class="text-muted">Còn <%= flight.available_seats %> ghế</small>
+                        </div>
+                    </div>
+                </div>
+            <% }); %>
+        </div>
+    </div>
+<% } %>
+
+<!-- Featured Hotels -->
+<% if (featured_hotels && featured_hotels.length > 0) { %>
+    <div class="mb-5">
+        <h3 class="mb-4">Khách sạn nổi bật</h3>
+        <div class="row">
+            <% featured_hotels.forEach(hotel => { %>
+                <div class="col-md-4 mb-3">
+                    <div class="card h-100">
+                        <div class="card-body">
+                            <h6 class="card-title"><%= hotel.name %></h6>
+                            <p class="card-text">
+                                <i class="fas fa-map-marker-alt"></i> <%= hotel.city %><br>
+                                <% if (hotel.rating) { %>
+                                    <span class="text-warning">
+                                        <% for(let i = 0; i < hotel.rating; i++) { %>★<% } %>
+                                    </span>
+                                <% } %>
+                            </p>
+                            <div class="d-flex justify-content-between align-items-center">
+                                <span class="h6 text-success"><%= formatCurrency(hotel.price_per_night) %>/đêm</span>
+                                <% if (user) { %>
+                                    <a href="/bookings/new?hotel_id=<%= hotel.id %>" class="btn btn-success btn-sm">Đặt ngay</a>
+                                <% } else { %>
+                                    <a href="/login" class="btn btn-outline-success btn-sm">Đăng nhập để đặt</a>
+                                <% } %>
+                            </div>
+                            <small class="text-muted">Còn <%= hotel.available_rooms %> phòng</small>
+                        </div>
+                    </div>
+                </div>
+            <% }); %>
+        </div>
+    </div>
+<% } %>
+
+<!-- Search Results Container -->
+<div id="search-results" class="mt-4"></div>
+
+<!-- Loading indicator -->
+<div id="loading-indicator" class="text-center mt-4" style="display: none;">
+    <div class="spinner-border text-primary" role="status">
+        <span class="visually-hidden">Đang tìm kiếm...</span>
+    </div>
+    <p class="mt-2">Đang tìm kiếm...</p>
+</div>

@@ -1,0 +1,132 @@
+<div class="hero-section bg-gradient-primary text-white py-5 mb-5 rounded">
+  <div class="container text-center">
+    <h1 class="display-5 mb-4">Tìm kiếm chuyến bay và khách sạn</h1>
+    <p class="lead">Tìm kiếm và so sánh giá tốt nhất cho chuyến đi của bạn</p>
+  </div>
+</div>
+
+<!-- Advanced Search Forms -->
+<div class="row">
+  <!-- Flight Search -->
+  <div class="col-lg-6 mb-4">
+    <div class="card shadow">
+      <div class="card-header bg-primary text-white">
+        <h5 class="mb-0"><i class="fas fa-plane"></i> Tìm chuyến bay</h5>
+      </div>
+      <div class="card-body">
+        <%= form_with url: search_flights_path, method: :post, local: false, id: "advanced-flight-search", class: "ajax-form" do |f| %>
+          <div class="row">
+            <div class="col-md-6 mb-3">
+              <%= f.label :departure_city, "Từ", class: "form-label" %>
+              <%= f.select :departure_city, 
+                  options_for_select([
+                    ['Hà Nội', 'Hà Nội'],
+                    ['Hồ Chí Minh', 'Hồ Chí Minh'],
+                    ['Đà Nẵng', 'Đà Nẵng'],
+                    ['Nha Trang', 'Nha Trang'],
+                    ['Phú Quốc', 'Phú Quốc']
+                  ]), 
+                  { prompt: 'Chọn thành phố khởi hành' }, 
+                  { class: "form-select" } %>
+            </div>
+            <div class="col-md-6 mb-3">
+              <%= f.label :arrival_city, "Đến", class: "form-label" %>
+              <%= f.select :arrival_city, 
+                  options_for_select([
+                    ['Hà Nội', 'Hà Nội'],
+                    ['Hồ Chí Minh', 'Hồ Chí Minh'],
+                    ['Đà Nẵng', 'Đà Nẵng'],
+                    ['Nha Trang', 'Nha Trang'],
+                    ['Phú Quốc', 'Phú Quốc']
+                  ]), 
+                  { prompt: 'Chọn thành phố đến' }, 
+                  { class: "form-select" } %>
+            </div>
+          </div>
+          
+          <div class="row">
+            <div class="col-md-6 mb-3">
+              <%= f.label :departure_date, "Ngày khởi hành", class: "form-label" %>
+              <%= f.date_field :departure_date, class: "form-control", min: Date.current %>
+            </div>
+            <div class="col-md-6 mb-3">
+              <%= f.label :passengers, "Số hành khách", class: "form-label" %>
+              <%= f.number_field :passengers, value: 1, min: 1, max: 9, class: "form-control" %>
+            </div>
+          </div>
+          
+          <%= f.submit "Tìm chuyến bay", class: "btn btn-primary w-100" %>
+        <% end %>
+      </div>
+    </div>
+  </div>
+  
+  <!-- Hotel Search -->
+  <div class="col-lg-6 mb-4">
+    <div class="card shadow">
+      <div class="card-header bg-success text-white">
+        <h5 class="mb-0"><i class="fas fa-hotel"></i> Tìm khách sạn</h5>
+      </div>
+      <div class="card-body">
+        <%= form_with url: search_hotels_path, method: :post, local: false, id: "advanced-hotel-search", class: "ajax-form" do |f| %>
+          <div class="mb-3">
+            <%= f.label :city, "Thành phố", class: "form-label" %>
+            <%= f.select :city, 
+                options_for_select([
+                  ['Hà Nội', 'Hà Nội'],
+                  ['Hồ Chí Minh', 'Hồ Chí Minh'],
+                  ['Đà Nẵng', 'Đà Nẵng'],
+                  ['Nha Trang', 'Nha Trang'],
+                  ['Phú Quốc', 'Phú Quốc']
+                ]), 
+                { prompt: 'Chọn thành phố' }, 
+                { class: "form-select" } %>
+          </div>
+          
+          <div class="row">
+            <div class="col-md-6 mb-3">
+              <%= f.label :check_in_date, "Ngày nhận phòng", class: "form-label" %>
+              <%= f.date_field :check_in_date, class: "form-control", min: Date.current %>
+            </div>
+            <div class="col-md-6 mb-3">
+              <%= f.label :check_out_date, "Ngày trả phòng", class: "form-label" %>
+              <%= f.date_field :check_out_date, class: "form-control", min: Date.current + 1.day %>
+            </div>
+          </div>
+          
+          <div class="row">
+            <div class="col-md-6 mb-3">
+              <%= f.label :min_rating, "Đánh giá tối thiểu", class: "form-label" %>
+              <%= f.select :min_rating, 
+                  options_for_select([
+                    ['Tất cả', ''],
+                    ['3 sao trở lên', '3'],
+                    ['4 sao trở lên', '4'],
+                    ['5 sao', '5']
+                  ]), 
+                  {}, 
+                  { class: "form-select" } %>
+            </div>
+            <div class="col-md-6 mb-3">
+              <%= f.label :rooms, "Số phòng", class: "form-label" %>
+              <%= f.number_field :rooms, value: 1, min: 1, max: 5, class: "form-control" %>
+            </div>
+          </div>
+          
+          <%= f.submit "Tìm khách sạn", class: "btn btn-success w-100" %>
+        <% end %>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Search Results Container -->
+<div id="search-results" class="mt-4"></div>
+
+<!-- Loading indicator -->
+<div id="loading-indicator" class="text-center mt-4" style="display: none;">
+  <div class="spinner-border text-primary" role="status">
+    <span class="visually-hidden">Đang tìm kiếm...</span>
+  </div>
+  <p class="mt-2">Đang tìm kiếm...</p>
+</div>

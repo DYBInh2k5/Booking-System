@@ -1,0 +1,33 @@
+<% if (flights && flights.length > 0) { %>
+    <h4 class="mb-3">Kết quả tìm kiếm chuyến bay (<%= flights.length %> chuyến bay)</h4>
+    <div class="row">
+        <% flights.forEach(flight => { %>
+            <div class="col-md-6 mb-3">
+                <div class="card">
+                    <div class="card-body">
+                        <h6 class="card-title"><%= flight.airline %> - <%= flight.flight_number %></h6>
+                        <p class="card-text">
+                            <strong><%= flight.departure_city %></strong> → <strong><%= flight.arrival_city %></strong><br>
+                            <small class="text-muted">
+                                <%= formatDateTime(flight.departure_time) %> - 
+                                <%= formatDateTime(flight.arrival_time) %>
+                            </small><br>
+                            <small class="text-info">
+                                Thời gian bay: <%= Math.round((new Date(flight.arrival_time) - new Date(flight.departure_time)) / (1000 * 60 * 60 * 100)) / 10 %> giờ
+                            </small>
+                        </p>
+                        <div class="d-flex justify-content-between align-items-center">
+                            <span class="h5 text-primary"><%= formatCurrency(flight.price) %></span>
+                            <a href="/bookings/new?flight_id=<%= flight.id %>" class="btn btn-primary btn-sm">Đặt ngay</a>
+                        </div>
+                        <small class="text-muted">Còn <%= flight.available_seats %> ghế</small>
+                    </div>
+                </div>
+            </div>
+        <% }); %>
+    </div>
+<% } else { %>
+    <div class="alert alert-info">
+        <i class="fas fa-info-circle"></i> Không tìm thấy chuyến bay nào phù hợp với tiêu chí tìm kiếm.
+    </div>
+<% } %>

@@ -1,0 +1,31 @@
+<% if @flights.any? %>
+  <h4 class="mb-3">Kết quả tìm kiếm chuyến bay (<%= @flights.count %> chuyến bay)</h4>
+  <div class="row">
+    <% @flights.each do |flight| %>
+      <div class="col-md-6 mb-3">
+        <div class="card">
+          <div class="card-body">
+            <h6 class="card-title"><%= flight.airline %> - <%= flight.flight_number %></h6>
+            <p class="card-text">
+              <strong><%= flight.departure_city %></strong> → <strong><%= flight.arrival_city %></strong><br>
+              <small class="text-muted">
+                <%= flight.departure_time.strftime("%d/%m/%Y %H:%M") %> - 
+                <%= flight.arrival_time.strftime("%d/%m/%Y %H:%M") %>
+              </small><br>
+              <small class="text-info">Thời gian bay: <%= flight.duration %> giờ</small>
+            </p>
+            <div class="d-flex justify-content-between align-items-center">
+              <span class="h5 text-primary"><%= number_to_currency(flight.price, unit: "₫", delimiter: ",") %></span>
+              <%= link_to "Đặt ngay", new_booking_path(flight_id: flight.id), class: "btn btn-primary btn-sm" %>
+            </div>
+            <small class="text-muted">Còn <%= flight.available_seats %> ghế</small>
+          </div>
+        </div>
+      </div>
+    <% end %>
+  </div>
+<% else %>
+  <div class="alert alert-info">
+    <i class="fas fa-info-circle"></i> Không tìm thấy chuyến bay nào phù hợp với tiêu chí tìm kiếm.
+  </div>
+<% end %>

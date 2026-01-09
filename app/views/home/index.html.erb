@@ -1,0 +1,120 @@
+<div class="hero-section bg-primary text-white py-5 mb-5 rounded">
+  <div class="container text-center">
+    <h1 class="display-4 mb-4">Chào mừng đến với Hệ thống Đặt chỗ</h1>
+    <p class="lead mb-4">Đặt vé máy bay và phòng khách sạn dễ dàng, nhanh chóng</p>
+    <%= link_to "Bắt đầu tìm kiếm", search_path, class: "btn btn-light btn-lg" %>
+  </div>
+</div>
+
+<!-- Quick Search -->
+<div class="row mb-5">
+  <div class="col-md-6">
+    <div class="card">
+      <div class="card-header">
+        <h5><i class="fas fa-plane"></i> Tìm chuyến bay</h5>
+      </div>
+      <div class="card-body">
+        <%= form_with url: search_flights_path, method: :post, local: false, id: "flight-search-form", class: "ajax-form" do |f| %>
+          <div class="row">
+            <div class="col-md-6 mb-3">
+              <%= f.text_field :departure_city, placeholder: "Từ", class: "form-control" %>
+            </div>
+            <div class="col-md-6 mb-3">
+              <%= f.text_field :arrival_city, placeholder: "Đến", class: "form-control" %>
+            </div>
+          </div>
+          <div class="mb-3">
+            <%= f.date_field :departure_date, class: "form-control" %>
+          </div>
+          <%= f.submit "Tìm chuyến bay", class: "btn btn-primary w-100" %>
+        <% end %>
+      </div>
+    </div>
+  </div>
+  
+  <div class="col-md-6">
+    <div class="card">
+      <div class="card-header">
+        <h5><i class="fas fa-hotel"></i> Tìm khách sạn</h5>
+      </div>
+      <div class="card-body">
+        <%= form_with url: search_hotels_path, method: :post, local: false, id: "hotel-search-form", class: "ajax-form" do |f| %>
+          <div class="mb-3">
+            <%= f.text_field :city, placeholder: "Thành phố", class: "form-control" %>
+          </div>
+          <div class="row">
+            <div class="col-md-6 mb-3">
+              <%= f.date_field :check_in_date, class: "form-control" %>
+            </div>
+            <div class="col-md-6 mb-3">
+              <%= f.date_field :check_out_date, class: "form-control" %>
+            </div>
+          </div>
+          <%= f.submit "Tìm khách sạn", class: "btn btn-success w-100" %>
+        <% end %>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Featured Flights -->
+<% if @featured_flights.any? %>
+  <div class="mb-5">
+    <h3 class="mb-4">Chuyến bay nổi bật</h3>
+    <div class="row">
+      <% @featured_flights.each do |flight| %>
+        <div class="col-md-4 mb-3">
+          <div class="card">
+            <div class="card-body">
+              <h6 class="card-title"><%= flight.airline %> - <%= flight.flight_number %></h6>
+              <p class="card-text">
+                <strong><%= flight.departure_city %></strong> → <strong><%= flight.arrival_city %></strong><br>
+                <small class="text-muted">
+                  <%= flight.departure_time.strftime("%d/%m %H:%M") %> - 
+                  <%= flight.arrival_time.strftime("%d/%m %H:%M") %>
+                </small>
+              </p>
+              <div class="d-flex justify-content-between align-items-center">
+                <span class="h5 text-primary"><%= number_to_currency(flight.price, unit: "₫", delimiter: ",") %></span>
+                <%= link_to "Đặt ngay", new_booking_path(flight_id: flight.id), class: "btn btn-primary btn-sm" %>
+              </div>
+            </div>
+          </div>
+        </div>
+      <% end %>
+    </div>
+  </div>
+<% end %>
+
+<!-- Featured Hotels -->
+<% if @featured_hotels.any? %>
+  <div class="mb-5">
+    <h3 class="mb-4">Khách sạn nổi bật</h3>
+    <div class="row">
+      <% @featured_hotels.each do |hotel| %>
+        <div class="col-md-4 mb-3">
+          <div class="card">
+            <div class="card-body">
+              <h6 class="card-title"><%= hotel.name %></h6>
+              <p class="card-text">
+                <i class="fas fa-map-marker-alt"></i> <%= hotel.city %><br>
+                <% if hotel.rating %>
+                  <span class="text-warning">
+                    <% hotel.rating.times do %>★<% end %>
+                  </span>
+                <% end %>
+              </p>
+              <div class="d-flex justify-content-between align-items-center">
+                <span class="h6 text-success"><%= number_to_currency(hotel.price_per_night, unit: "₫", delimiter: ",") %>/đêm</span>
+                <%= link_to "Đặt ngay", new_booking_path(hotel_id: hotel.id), class: "btn btn-success btn-sm" %>
+              </div>
+            </div>
+          </div>
+        </div>
+      <% end %>
+    </div>
+  </div>
+<% end %>
+
+<!-- Search Results Container -->
+<div id="search-results" class="mt-4"></div>

@@ -1,0 +1,31 @@
+<% if @hotels.any? %>
+  <h4 class="mb-3">Kết quả tìm kiếm khách sạn (<%= @hotels.count %> khách sạn)</h4>
+  <div class="row">
+    <% @hotels.each do |hotel| %>
+      <div class="col-md-6 mb-3">
+        <div class="card">
+          <div class="card-body">
+            <h6 class="card-title"><%= hotel.name %></h6>
+            <p class="card-text">
+              <i class="fas fa-map-marker-alt"></i> <%= hotel.city %><br>
+              <% if hotel.rating %>
+                <span class="text-warning">
+                  <% hotel.rating.times do %>★<% end %>
+                </span>
+              <% end %>
+            </p>
+            <div class="d-flex justify-content-between align-items-center">
+              <span class="h6 text-success"><%= number_to_currency(hotel.price_per_night, unit: "₫", delimiter: ",") %>/đêm</span>
+              <%= link_to "Đặt ngay", new_booking_path(hotel_id: hotel.id), class: "btn btn-success btn-sm" %>
+            </div>
+            <small class="text-muted">Còn <%= hotel.available_rooms %> phòng</small>
+          </div>
+        </div>
+      </div>
+    <% end %>
+  </div>
+<% else %>
+  <div class="alert alert-info">
+    <i class="fas fa-info-circle"></i> Không tìm thấy khách sạn nào phù hợp với tiêu chí tìm kiếm.
+  </div>
+<% end %>

@@ -1,0 +1,71 @@
+<div class="d-flex justify-content-between align-items-center mb-4">
+  <h2>Đặt chỗ của tôi</h2>
+  <%= link_to "Tìm kiếm thêm", search_path, class: "btn btn-primary" %>
+</div>
+
+<% if @bookings.any? %>
+  <div class="row">
+    <% @bookings.each do |booking| %>
+      <div class="col-md-6 mb-4">
+        <div class="card">
+          <div class="card-header d-flex justify-content-between align-items-center">
+            <h6 class="mb-0">
+              <i class="fas fa-<%= booking.bookable.is_a?(Flight) ? 'plane' : 'hotel' %>"></i>
+              <%= booking.bookable.is_a?(Flight) ? 'Chuyến bay' : 'Khách sạn' %>
+            </h6>
+            <span class="badge bg-<%= booking.status == 'confirmed' ? 'success' : booking.status == 'pending' ? 'warning' : 'danger' %>">
+              <%= booking.status == 'confirmed' ? 'Đã xác nhận' : booking.status == 'pending' ? 'Chờ xác nhận' : 'Đã hủy' %>
+            </span>
+          </div>
+          <div class="card-body">
+            <% if booking.bookable.is_a?(Flight) %>
+              <h6><%= booking.bookable.airline %> - <%= booking.bookable.flight_number %></h6>
+              <p class="mb-2">
+                <strong><%= booking.bookable.departure_city %></strong> → <strong><%= booking.bookable.arrival_city %></strong>
+              </p>
+              <p class="mb-2">
+                <small class="text-muted">
+                  <%= booking.bookable.departure_time.strftime("%d/%m/%Y %H:%M") %> - 
+                  <%= booking.bookable.arrival_time.strftime("%d/%m/%Y %H:%M") %>
+                </small>
+              </p>
+            <% else %>
+              <h6><%= booking.bookable.name %></h6>
+              <p class="mb-2">
+                <i class="fas fa-map-marker-alt"></i> <%= booking.bookable.city %>
+              </p>
+              <p class="mb-2">
+                <small class="text-muted">
+                  <%= booking.check_in_date.strftime("%d/%m/%Y") %> - 
+                  <%= booking.check_out_date.strftime("%d/%m/%Y") %>
+                  (<%= booking.nights %> đêm)
+                </small>
+              </p>
+            <% end %>
+            
+            <div class="d-flex justify-content-between align-items-center">
+              <strong class="text-primary"><%= number_to_currency(booking.total_amount, unit: "₫", delimiter: ",") %></strong>
+              <%= link_to "Chi tiết", booking, class: "btn btn-outline-primary btn-sm" %>
+            </div>
+            
+            <div class="mt-2">
+              <small class="text-muted">
+                Mã đặt chỗ: <strong><%= booking.booking_reference %></strong><br>
+                Đặt ngày: <%= booking.created_at.strftime("%d/%m/%Y") %>
+              </small>
+            </div>
+          </div>
+        </div>
+      </div>
+    <% end %>
+  </div>
+  
+  <!-- Pagination would go here if needed -->
+<% else %>
+  <div class="text-center py-5">
+    <i class="fas fa-calendar-times fa-3x text-muted mb-3"></i>
+    <h4>Chưa có đặt chỗ nào</h4>
+    <p class="text-muted">Bạn chưa có đặt chỗ nào. Hãy bắt đầu tìm kiếm chuyến bay hoặc khách sạn.</p>
+    <%= link_to "Bắt đầu tìm kiếm", search_path, class: "btn btn-primary" %>
+  </div>
+<% end %>

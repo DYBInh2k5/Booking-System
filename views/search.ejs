@@ -1,0 +1,127 @@
+<div class="hero-section text-white py-5 mb-5 rounded">
+    <div class="container text-center">
+        <h1 class="display-5 mb-4">Tìm kiếm chuyến bay và khách sạn</h1>
+        <p class="lead">Tìm kiếm và so sánh giá tốt nhất cho chuyến đi của bạn</p>
+    </div>
+</div>
+
+<!-- Advanced Search Forms -->
+<div class="row">
+    <!-- Flight Search -->
+    <div class="col-lg-6 mb-4">
+        <div class="card shadow">
+            <div class="card-header bg-primary text-white">
+                <h5 class="mb-0"><i class="fas fa-plane"></i> Tìm chuyến bay</h5>
+            </div>
+            <div class="card-body">
+                <form id="advanced-flight-search">
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">Từ</label>
+                            <select name="departure_city" class="form-select" required>
+                                <option value="">Chọn thành phố khởi hành</option>
+                                <option value="Hà Nội">Hà Nội</option>
+                                <option value="Hồ Chí Minh">Hồ Chí Minh</option>
+                                <option value="Đà Nẵng">Đà Nẵng</option>
+                                <option value="Nha Trang">Nha Trang</option>
+                                <option value="Phú Quốc">Phú Quốc</option>
+                            </select>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">Đến</label>
+                            <select name="arrival_city" class="form-select" required>
+                                <option value="">Chọn thành phố đến</option>
+                                <option value="Hà Nội">Hà Nội</option>
+                                <option value="Hồ Chí Minh">Hồ Chí Minh</option>
+                                <option value="Đà Nẵng">Đà Nẵng</option>
+                                <option value="Nha Trang">Nha Trang</option>
+                                <option value="Phú Quốc">Phú Quốc</option>
+                            </select>
+                        </div>
+                    </div>
+                    
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">Ngày khởi hành</label>
+                            <input type="date" name="departure_date" class="form-control" min="<%= new Date().toISOString().split('T')[0] %>">
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">Số hành khách</label>
+                            <input type="number" name="passengers" value="1" min="1" max="9" class="form-control">
+                        </div>
+                    </div>
+                    
+                    <button type="submit" class="btn btn-primary w-100">
+                        <i class="fas fa-search"></i> Tìm chuyến bay
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Hotel Search -->
+    <div class="col-lg-6 mb-4">
+        <div class="card shadow">
+            <div class="card-header bg-success text-white">
+                <h5 class="mb-0"><i class="fas fa-hotel"></i> Tìm khách sạn</h5>
+            </div>
+            <div class="card-body">
+                <form id="advanced-hotel-search">
+                    <div class="mb-3">
+                        <label class="form-label">Thành phố</label>
+                        <select name="city" class="form-select" required>
+                            <option value="">Chọn thành phố</option>
+                            <option value="Hà Nội">Hà Nội</option>
+                            <option value="Hồ Chí Minh">Hồ Chí Minh</option>
+                            <option value="Đà Nẵng">Đà Nẵng</option>
+                            <option value="Nha Trang">Nha Trang</option>
+                            <option value="Phú Quốc">Phú Quốc</option>
+                        </select>
+                    </div>
+                    
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">Ngày nhận phòng</label>
+                            <input type="date" name="check_in_date" class="form-control" min="<%= new Date().toISOString().split('T')[0] %>">
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">Ngày trả phòng</label>
+                            <input type="date" name="check_out_date" class="form-control" min="<%= new Date(Date.now() + 86400000).toISOString().split('T')[0] %>">
+                        </div>
+                    </div>
+                    
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">Đánh giá tối thiểu</label>
+                            <select name="min_rating" class="form-select">
+                                <option value="">Tất cả</option>
+                                <option value="3">3 sao trở lên</option>
+                                <option value="4">4 sao trở lên</option>
+                                <option value="5">5 sao</option>
+                            </select>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">Số phòng</label>
+                            <input type="number" name="rooms" value="1" min="1" max="5" class="form-control">
+                        </div>
+                    </div>
+                    
+                    <button type="submit" class="btn btn-success w-100">
+                        <i class="fas fa-search"></i> Tìm khách sạn
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Search Results Container -->
+<div id="search-results" class="mt-4"></div>
+
+<!-- Loading indicator -->
+<div id="loading-indicator" class="text-center mt-4" style="display: none;">
+    <div class="spinner-border text-primary" role="status">
+        <span class="visually-hidden">Đang tìm kiếm...</span>
+    </div>
+    <p class="mt-2">Đang tìm kiếm...</p>
+</div>
